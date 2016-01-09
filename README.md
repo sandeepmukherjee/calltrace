@@ -48,15 +48,18 @@ A: In calltrace.c change the variable "enable" to 0. Then in the program that
 
 Q: I ran a test and immediately generated stack output. I don't see some of the
    functions.
+
 A: The log file may not be getting flushed. Try calling calltrace_flush() from
    gdb or add this function somewhere in the code.
 
 Q: My program runs so slow that I get timeout errors.
+
 A: Try instrumenting only part of the build at a time - files that you are most
    interested in. This will give you partial stacks, but you will have some
    data.
 
 Q: My target system does not have perl installed. Can I still use calltrace?
+
 A: Yes! But you will need to find a Linux/BSD machine with perl and a way to
    move files back and forth between them. In step 4 of instructions above,
    copy the log file to the perl-machine to run genscript.pl. Copy the resulting
@@ -64,5 +67,6 @@ A: Yes! But you will need to find a Linux/BSD machine with perl and a way to
    /tmp of perl machine for steps 6 and 7.
 
 Q: I don't want to/can't use /tmp. Can I use another directory?
+
 A: Right now, you will have to manually change the paths in the scripts and
    calltrace.c. The plan is to use a special environment variable (volunteers?)
