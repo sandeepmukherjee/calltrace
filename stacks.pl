@@ -1,19 +1,9 @@
 #!/usr/bin/perl
 
+# Generates a sequence of stack traces from formatted ftrace log file
+# (as produced by parse_ftrace.pl)
 
 use strict;
-
-# Check if stack1 is part of stack 2. For example this is true:
-# stack1: a->b->c
-# stack2: a->b->c->d
-# Both are strings in above form.
-sub is_substack($$) {
-    my ($stack1, $stack2) = @_;
-
-    return 0 if(length($stack1) > length($stack2));
-    return $stack2 =~ m/^$stack1/;
-
-}
 
 sub parse_line($) {
     my $inline = shift;

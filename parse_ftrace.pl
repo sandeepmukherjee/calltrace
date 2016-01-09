@@ -22,7 +22,7 @@ my %syms; # Maps address -> symbol name
 # Value is incremented by 2 for every entry, and decremented on exit
 
 my %indents;
-open(SYMLOG, "/tmp/gdbsyms") or die "GAAAAAAAAAAAAAAAAAA";
+open(SYMLOG, "/tmp/gdbsyms") or die "Can't open /tmp/gdbsyms";
 while (<SYMLOG>) {
     # parse this:
     #0x8046743d0 <NpfsFindFCB at /.automount/nfs.panwest.panasas.com/root/sb11/smukherjee/trunk-doc/src/likewise/lwio/server/npfs/fcb.c:86>: 0xe5894855
@@ -62,5 +62,6 @@ while(read CIFSLOG, $buf, 6 * 8) { # 6 64-bit unsigned ints.
 }
 
 # Split threads into files using:
+# mkdir tmp/
 # awk -e '{print $1}' flow.txt | sort | uniq | xargs -I TID sh -c "grep TID flow.txt > tmp/TID"
 

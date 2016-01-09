@@ -1,6 +1,8 @@
-// THIS IS WORK IN PROGRESS
-// TODO: Rename to something better.
-//
+/*
+ * This file contains instrumentation code needed for ftrace to work.
+ * You must include this file as part of your build.
+ * See README.md for details.
+ */
 #include <pthread.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -10,7 +12,7 @@
 #include <unistd.h>
 
 #define FTRACE_BUFFER_SIZE (1024 * 1024) /* 1 MB default */
-struct fnrec {
+struct ftrace_rec {
     uint64_t type;
     uint64_t this_fn;
     uint64_t call_site;
@@ -23,14 +25,17 @@ static int enable = 1;
 static FILE *fptr = NULL;
 static uint64_t nrecords = 0;
 static pthread_mutex_t loglock = PTHREAD_MUTEX_INITIALIZER;
+
 #define NUM_RECORDS_MAX 200000
 
-__attribute__ ((no_instrument_function)) void __cyg_profile_func_enter (void * this_fn, void * call_site)
+__attribute__ ((no_instrument_function))
+void __cyg_profile_func_enter (void * this_fn, void * call_site)
 {
-    struct fnrec myrec;
+    struct ftrace_rec myrec;
     assert(pthread_mutex_lock(&loglock) == 0);
     if (enable) {
-        if (nrecords > NUM_RECORDS_MAX) {
+        if (nrecords > NUM_RECORDS_MAX) { 
+            /* TODO: truncate file and start from beginning */
             fclose(fptr);
             fptr = NULL;
             nrecords = 0;
@@ -57,9 +62,10 @@ __attribute__ ((no_instrument_function)) void __cyg_profile_func_enter (void * t
     pthread_mutex_unlock(&loglock);
 }
 
-__attribute__ ((no_instrument_function)) void __cyg_profile_func_exit (void * this_fn, void * call_site)
+__attribute__ ((no_instrument_function)) void 
+__cyg_profile_func_exit (void * this_fn, void * call_site)
 {
-    struct fnrec myrec;
+    struct ftrace_rec myrec;
     assert(pthread_mutex_lock(&loglock) == 0);
     if (enable && fptr != NULL) {
         myrec.type = 0x2;
@@ -89,6 +95,7 @@ void ftrace_enable()
     enable = 1;
     pthread_mutex_unlock(&loglock);
 }
+
 void ftrace_disable()
 {
     assert(pthread_mutex_lock(&loglock) == 0);
