@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# Reads a raw ftrace log file and prints a gdb script file to stdout.
+# Reads a raw calltrace log file and prints a gdb script file to stdout.
 # The gdb script file should be run from within gdb:
 # gdb> source /tmp/gdbscript
 # When run in this manner, a file called /tmp/gdbsysms is created which
@@ -13,7 +13,7 @@ sub get_fields($) {
     return @ret;
 }
 
-my $logfile = shift or die "usage: $0 ftrace-log-file";
+my $logfile = shift or die "usage: $0 /tmp/calltrace-PID.log";
 
 my $buf;
 open (FD, $logfile) or die "Could not read $logfile: $!";

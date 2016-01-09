@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 #
-# Reads raw ftrace log file and the file /tmp/gdbsyms (hardcoded path)
+# Reads raw calltrace log file and the file /tmp/gdbsyms (hardcoded path)
 # To generate human-readable log file of stack.
 # Use stacks.pl on output to process further.
 use strict;
@@ -15,8 +15,8 @@ sub get_fields($) {
     return @ret;
 }
 
-die "usage: $0 ftracefile" unless(scalar(@ARGV) == 1);
-my $ftracefile = $ARGV[0];
+die "usage: $0 /tmp/calltrace-PID.log" unless(scalar(@ARGV) == 1);
+my $calltracefile = $ARGV[0];
 
 my %syms; # Maps address -> symbol name
 # Value is incremented by 2 for every entry, and decremented on exit
@@ -38,7 +38,7 @@ close SYMLOG;
 #}
 
 my $buf;
-open(CIFSLOG, $ftracefile) or die "Cannot read $ftracefile: $!";
+open(CIFSLOG, $calltracefile) or die "Cannot read $calltracefile: $!";
 while(read CIFSLOG, $buf, 6 * 8) { # 6 64-bit unsigned ints.
     my ($type, $this_fn, $call_site, $timestamp, $pid, $tid) = get_fields($buf);
     my $timestr = strftime('%H:%M:%S', localtime($timestamp));

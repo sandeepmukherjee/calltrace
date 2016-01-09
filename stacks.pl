@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
-# Generates a sequence of stack traces from formatted ftrace log file
-# (as produced by parse_ftrace.pl)
+# Generates a sequence of stack traces from formatted calltrace log file
+# (as produced by parselog.pl)
 
 use strict;
 

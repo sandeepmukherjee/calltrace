@@ -1,5 +1,5 @@
 /*
- * This file contains instrumentation code needed for ftrace to work.
+ * This file contains instrumentation code needed for calltrace to work.
  * You must include this file as part of your build.
  * See README.md for details.
  */
@@ -11,8 +11,8 @@
 #include <assert.h>
 #include <unistd.h>
 
-#define FTRACE_BUFFER_SIZE (1024 * 1024) /* 1 MB default */
-struct ftrace_rec {
+#define CALLTRACE_BUFFER_SIZE (1024 * 1024) /* 1 MB default */
+struct calltrace_rec {
     uint64_t type;
     uint64_t this_fn;
     uint64_t call_site;
@@ -31,7 +31,7 @@ static pthread_mutex_t loglock = PTHREAD_MUTEX_INITIALIZER;
 __attribute__ ((no_instrument_function))
 void __cyg_profile_func_enter (void * this_fn, void * call_site)
 {
-    struct ftrace_rec myrec;
+    struct calltrace_rec myrec;
     assert(pthread_mutex_lock(&loglock) == 0);
     if (enable) {
         if (nrecords > NUM_RECORDS_MAX) { 
@@ -43,12 +43,12 @@ void __cyg_profile_func_enter (void * this_fn, void * call_site)
         if (fptr == NULL) {
             char path[2000];
             char *buf = NULL;
-            sprintf(path, "/tmp/ftrace-%u.log", getpid());
+            sprintf(path, "/tmp/calltrace-%u.log", getpid());
             fptr = fopen(path, "w");
             assert(fptr != NULL);
-            buf = (char *)malloc(FTRACE_BUFFER_SIZE);
+            buf = (char *)malloc(CALLTRACE_BUFFER_SIZE);
             assert(buf != NULL);
-            setbuffer(fptr, buf, FTRACE_BUFFER_SIZE);
+            setbuffer(fptr, buf, CALLTRACE_BUFFER_SIZE);
         }
         myrec.type = 0x1;
         myrec.this_fn = (uint64_t)this_fn;
@@ -65,7 +65,7 @@ void __cyg_profile_func_enter (void * this_fn, void * call_site)
 __attribute__ ((no_instrument_function)) void 
 __cyg_profile_func_exit (void * this_fn, void * call_site)
 {
-    struct ftrace_rec myrec;
+    struct calltrace_rec myrec;
     assert(pthread_mutex_lock(&loglock) == 0);
     if (enable && fptr != NULL) {
         myrec.type = 0x2;
@@ -80,7 +80,7 @@ __cyg_profile_func_exit (void * this_fn, void * call_site)
     pthread_mutex_unlock(&loglock);
 }
 
-void ftrace_flush()
+void calltrace_flush()
 {
 
     assert(pthread_mutex_lock(&loglock) == 0);
@@ -89,14 +89,14 @@ void ftrace_flush()
     pthread_mutex_unlock(&loglock);
 }
 
-void ftrace_enable()
+void calltrace_enable()
 {
     assert(pthread_mutex_lock(&loglock) == 0);
     enable = 1;
     pthread_mutex_unlock(&loglock);
 }
 
-void ftrace_disable()
+void calltrace_disable()
 {
     assert(pthread_mutex_lock(&loglock) == 0);
     enable = 0;

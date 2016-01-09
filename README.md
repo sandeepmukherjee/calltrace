@@ -1,29 +1,30 @@
 
-ftrace is a tool that traces the execution of a program written in C language.
-ftrace can work with large, multi-threaded programs. To use:
+calltrace is a tool that traces the execution of a program written in C
+language.
+calltrace can work with large, multi-threaded programs. To use:
 
-1. Add ftrace.c to the build. Customize as needed.
+1. Add calltrace.c to the build. Customize as needed.
 
 2. Add gcc flag -finstrument-functions to build. Also add -g and turn off
    optimizations (-O0).
 
-3. Load build. Run tests. This should produce /tmp/ftrace-PID.log, where 
+3. Load build. Run tests. This should produce /tmp/calltrace-PID.log, where 
    PID is the process-id of the process.
    Note, the instrumented program will experience significant slowdown.
 
 4. On the target system, run:
-    genscript.pl /tmp/ftrace-NNN.log > /tmp/gdbscript
+    genscript.pl /tmp/calltrace-PID.log > /tmp/gdbscript
 
 5.  Run gdb on target executable. In gdb prompt type:
     (gdb) source gdbscript.
     This will create /tmp/gdbsyms
 
 6. Run:
-    ./parse_ftrace.pl /tmp/ftrace-NNNN.log > ftrace.txt
-    Note, parse_ftrace.pl uses /tmp/gdbsyms as input. The pathname is hardcoded.
+    ./parselog.pl /tmp/calltrace-PID.log > calltrace.txt
+    Note, parselog.pl uses /tmp/gdbsyms as input. The pathname is hardcoded.
 
-7. ftrace.txt is human-readable. You can also run:
-   ./stacks.pl ftrace.txt to obtain list of all stacks.
+7. calltrace.txt is human-readable. You can also run:
+   ./stacks.pl calltrace.txt to obtain list of all stacks.
 
 Here's a small portion of trace logs showing sqlite3 in action:
 18:34:22: 7f7ff7a10700 -->                        sqlite3Strlen30
@@ -55,7 +56,7 @@ Here's a small portion of trace logs showing sqlite3 in action:
 
 The first field is the timestamp.
 The second field the thread ID in hex. In this example, there's only one thread
-(main thread), but ftrace works with multithreaded programs as well.
+(main thread), but calltrace works with multithreaded programs as well.
 The next field shows whether the function is being entered (-->) or exited (<--)
 .
 The number of spaces show the level of call stack,
