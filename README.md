@@ -34,11 +34,13 @@ See sample-output.txt to get an idea of what calltrace produces.
 FAQs and Tips
 =============
 Q: Why not automate the process using readelf or similar tools?
+
 A: For programs that load libraries dynamically at runtime, some symbols cannot
    be resolved till the libraries are loaded.
 
 Q: I instrumented some libraries which are used in many executables, and they
    generate too many log files. I want to debug only one program.
+
 A: In calltrace.c change the variable "enable" to 0. Then in the program that
    you do want to instrument, make a call to calltrace_enable() from a function
    that gets called early, say main(). Alternatively, you can run the program
