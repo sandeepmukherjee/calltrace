@@ -23,18 +23,15 @@ sub parse_line($) {
     # OR
     #18:34:02: 7f7ff7a10700 -->  sqlite3_config
     $ret{'timestamp'} = substr($inline, 0, 8);
-    $ret{'tid'} = substr($inline, 10, 9);
-    my $x = substr($inline, 20, 3);
-    $ret{'direction'} = ($x eq '-->') ? 'IN' : 'OUT';
-    $x = substr($inline, 23);
-    if ($x =~ m/^( +)/) {
-        $ret{'level'} = length($1)/2;
+    my $remain = substr($inline, 10);
+    if ($remain =~ m/^([0-9a-fA-F]+) ([-<>]+)(\s+)(\w+)/) {
+        $ret{'tid'} = $1;
+        $ret{'direction'} = ($2 eq '-->') ? 'IN' : 'OUT';
+        $ret{'level'} = length($3)/2;
+        $ret{'function'} = $4;
     } else {
-        $ret{'level'} = 0;
+        die "Invalid input line: $inline";
     }
-
-    $x =~ s/^\s+//;
-    $ret{'function'} = $x;
 
     return %ret;
 }
