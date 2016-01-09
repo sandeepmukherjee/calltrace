@@ -1,8 +1,15 @@
-1. Add customlog.c to the build. Customize as needed.
 
-2. Add gcc flag -finstrument-functions to build.
+ftrace is a tool that traces the execution of a program written in C language.
+ftrace can work with large, multi-threaded programs. To use:
 
-3. Load build. Run tests. This should produce /tmp/ftrace-*.log
+1. Add ftrace.c to the build. Customize as needed.
+
+2. Add gcc flag -finstrument-functions to build. Also add -g and turn off
+   optimizations (-O0).
+
+3. Load build. Run tests. This should produce /tmp/ftrace-PID.log, where 
+   PID is the process-id of the process.
+   Note, the instrumented program will experience significant slowdown.
 
 4. On the target system, run:
     genscript.pl /tmp/ftrace-NNN.log > /tmp/gdbscript
