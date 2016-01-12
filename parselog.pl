@@ -38,8 +38,8 @@ close SYMLOG;
 #}
 
 my $buf;
-open(CIFSLOG, $calltracefile) or die "Cannot read $calltracefile: $!";
-while(read CIFSLOG, $buf, 6 * 8) { # 6 64-bit unsigned ints.
+open(FD, $calltracefile) or die "Cannot read $calltracefile: $!";
+while(read FD, $buf, 6 * 8) { # 6 64-bit unsigned ints.
     my ($type, $this_fn, $call_site, $timestamp, $pid, $tid) = get_fields($buf);
     my $timestr = strftime('%H:%M:%S', localtime($timestamp));
     my $printit = ($LEVEL * 2 >= $indents{$tid});
@@ -50,18 +50,15 @@ while(read CIFSLOG, $buf, 6 * 8) { # 6 64-bit unsigned ints.
             $indents{$tid} += 2;
             print ' ' x $indents{$tid} if ($printit);
      } else {
+            $indents{$tid}  = 2 if ($indents{$tid}) < 2;
             my $arrow = '<--';
             printf("%s: %x %s", $timestr, $tid,$arrow) if ($printit);
             print ' ' x $indents{$tid} if ($printit);
             $indents{$tid} -= 2;
-            $indents{$tid}  = 0 if ($indents{$tid}) < 0;
     }
     my $sym = sprintf("0x%x", $this_fn);
     my $func = ($syms{$sym} ? $syms{$sym} : $sym);
     print "$func\n" if ($printit);
 }
 
-# Split threads into files using:
-# mkdir tmp/
-# awk -e '{print $1}' flow.txt | sort | uniq | xargs -I TID sh -c "grep TID flow.txt > tmp/TID"
-
+close FD;
