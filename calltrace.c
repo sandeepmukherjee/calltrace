@@ -100,5 +100,8 @@ void calltrace_disable()
 {
     assert(pthread_mutex_lock(&loglock) == 0);
     enable = 0;
+    if (fptr)
+        fclose(fptr);
+    fptr = NULL;
     pthread_mutex_unlock(&loglock);
 }
