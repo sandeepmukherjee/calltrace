@@ -25,7 +25,7 @@ my %indents;
 open(SYMLOG, "/tmp/gdbsyms") or die "Can't open /tmp/gdbsyms";
 while (<SYMLOG>) {
     # parse this:
-    #0x8046743d0 <NpfsFindFCB at /.automount/nfs.panwest.panasas.com/root/sb11/smukherjee/trunk-doc/src/likewise/lwio/server/npfs/fcb.c:86>: 0xe5894855
+    #0x8046743d0 <funcname at /path/to/file.c:86>: 0xe5894855
     if (/(0x[\dabcdef]+) <(\w+)/) {
         $syms{$1} = $2;
     }
