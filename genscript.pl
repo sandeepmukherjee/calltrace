@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 # Reads a raw calltrace log file and prints a gdb script file to stdout.
 # The gdb script file should be run from within gdb:
-# gdb> source /tmp/gdbscript
-# When run in this manner, a file called /tmp/gdbsysms is created which
-# is used further during processing
+# gdb> source gdbscript
+# When run in this manner, a file called $CALLTRACEDIR/gdbsysms is created
+# which is used further during processing
 use strict;
 
 sub get_fields($) {
@@ -13,13 +13,15 @@ sub get_fields($) {
     return @ret;
 }
 
-my $logfile = shift or die "usage: $0 /tmp/calltrace-PID.log";
+my $dir = '/tmp';
+$dir = $ENV{'CALLTRACEDIR'} if $ENV{'CALLTRACEDIR'};
+my $logfile = shift or die "usage: $0 $dir/calltrace-PID.log";
 
 my $buf;
 open (FD, $logfile) or die "Could not read $logfile: $!";
 my %syms;
 print "set height 0\n";
-print "set logging file /tmp/gdbsyms\n";
+print "set logging file $dir/gdbsyms\n";
 print "set logging on\n";
 while(read FD, $buf, 6 * 8) { # 6 64-bit unsigned ints.
     my ($type, $this_fn, $call_site, $timestamp, $pid, $tid) = get_fields($buf);

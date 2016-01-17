@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
-# Reads raw calltrace log file and the file /tmp/gdbsyms (hardcoded path)
-# To generate human-readable log file of stack.
+# Reads raw calltrace log file and the file $CALLTRACEDIR/gdbsyms to generate
+# human-readable log file of stack.
 # Use stacks.pl on output to process further.
 use strict;
 use POSIX qw(strftime);
@@ -15,14 +15,17 @@ sub get_fields($) {
     return @ret;
 }
 
-die "usage: $0 /tmp/calltrace-PID.log" unless(scalar(@ARGV) == 1);
+my $dir = '/tmp';
+$dir = $ENV{'CALLTRACEDIR'} if($ENV{'CALLTRACEDIR'});
+
+die "usage: $0 $dir/calltrace-PID.log" unless(scalar(@ARGV) == 1);
 my $calltracefile = $ARGV[0];
 
 my %syms; # Maps address -> symbol name
 # Value is incremented by 2 for every entry, and decremented on exit
 
 my %indents;
-open(SYMLOG, "/tmp/gdbsyms") or die "Can't open /tmp/gdbsyms";
+open(SYMLOG, "$dir/gdbsyms") or die "Can't open $dir/gdbsyms";
 while (<SYMLOG>) {
     # parse this:
     #0x8046743d0 <funcname at /path/to/file.c:86>: 0xe5894855

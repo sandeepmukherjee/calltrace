@@ -13,22 +13,26 @@ To use:
 2. Add gcc flag -finstrument-functions to build. Also add -g and turn off
    optimizations (-O0).
 
-3. Load build. Run tests. This should produce /tmp/calltrace-PID.log, where
-   PID is the process-id of the process.
+3. Set environment variable CALLTRACEDIR. If this variable is not set, /tmp is
+   used.
+
+4. Run your program. This should produce $CALLTRACEDIR/calltrace-PID.log,
+   where PID is the process-id of the process.
    Note, the instrumented program will experience significant slowdown.
 
-4. On the target system, run:
-    genscript.pl /tmp/calltrace-PID.log > /tmp/gdbscript
+5. On the target system, run:
+    genscript.pl $CALLTRACEDIR/calltrace-PID.log > gdbscript
 
-5.  Run gdb on target executable. In gdb prompt type:
-    (gdb) source gdbscript.
-    This will create /tmp/gdbsyms
+6.  Run gdb on target executable. In gdb prompt type:
+    (gdb) source gdbscript
+    This will create $CALLTRACEDIR/gdbsyms
 
-6. Run:
-    ./parselog.pl /tmp/calltrace-PID.log > calltrace.txt
-    Note, parselog.pl uses /tmp/gdbsyms as input. The pathname is hardcoded.
+7. Run:
+    ./parselog.pl $CALLTRACEDIR/calltrace-PID.log > calltrace.txt
+    Note, parselog.pl uses $CALLTRACEDIR/gdbsyms as input.
+    The pathname is hardcoded.
 
-7. calltrace.txt is human-readable. You can also run:
+8. calltrace.txt is human-readable. You can also run:
    ./stacks.pl calltrace.txt to obtain list of all stacks.
 
 
@@ -68,9 +72,5 @@ A: Yes! But you will need to find a Linux/BSD machine with perl and a way to
    move files back and forth between them. In step 4 of instructions above,
    copy the log file to the perl-machine to run genscript.pl. Copy the resulting
    gdbscript back to /tmp of target machine for step 5. Then copy gdbsysms to
-   /tmp of perl machine for steps 6 and 7.
-
-Q: I don't want to/can't use /tmp. Can I use another directory?
-
-A: Right now, you will have to manually change the paths in the scripts and
-   calltrace.c. The plan is to use a special environment variable (volunteers?)
+   /tmp of perl machine for steps 6 and 7. (If CALLTRACEDIR is set, use that
+   directory instead of /tmp)

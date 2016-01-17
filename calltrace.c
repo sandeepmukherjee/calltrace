@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <unistd.h>
@@ -41,11 +42,18 @@ void __cyg_profile_func_enter (void * this_fn, void * call_site)
             nrecords = 0;
         }
         if (fptr == NULL) {
-            char path[2000];
-            char *buf = NULL;
-            sprintf(path, "/tmp/calltrace-%u.log", getpid());
+            int pathbuflen = 0;
+            char *buf = NULL, *path = NULL;
+            const char *dir = getenv("CALLTRACEDIR");
+            if (dir == NULL)
+                dir = "/tmp";
+            pathbuflen = strlen(dir) + 100;
+            path = calloc(1, pathbuflen);
+            assert(path != NULL);
+            snprintf(path, pathbuflen, "%s/calltrace-%u.log", dir, getpid());
             fptr = fopen(path, "w");
             assert(fptr != NULL);
+            free(path); path = NULL;
             buf = (char *)malloc(CALLTRACE_BUFFER_SIZE);
             assert(buf != NULL);
             setbuffer(fptr, buf, CALLTRACE_BUFFER_SIZE);
