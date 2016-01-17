@@ -31,5 +31,6 @@ int main()
     for (i=0; i<5; i++)
         pthread_join(tids[i], NULL);
 
+    calltrace_disable();
     return 0;
 }

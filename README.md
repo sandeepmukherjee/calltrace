@@ -1,7 +1,10 @@
 
 calltrace is a tool that traces the execution of a program written in C
 language. It can help you understand how large, undocumented, multithreaded
- C programs work.
+C programs work. calltrace uses gcc's -finstrument-functions switch to log
+functions as they are entered and exited. Various scripts then generate
+human-readable output from the log files. See sample-output.txt to get an idea
+of what calltrace produces.
 
 To use:
 
@@ -29,7 +32,6 @@ To use:
    ./stacks.pl calltrace.txt to obtain list of all stacks.
 
 
-See sample-output.txt to get an idea of what calltrace produces.
 
 FAQs and Tips
 =============
