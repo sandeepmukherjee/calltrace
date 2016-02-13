@@ -8,13 +8,13 @@ use strict;
 sub parse_line($) {
     my $inline = shift;
     my %ret;
-    # parse:
+    # parse lines like these:
     #22:28:43: 80330e3d0 -->    SomeFunction
-    # OR
     #18:34:02: 7f7ff7a10700 -->  sqlite3_config
+    #19:59:16: 7f1ea4d3e780 -->      std::list<WTP::WorkItem*, std::allocator<WTP::WorkItem*> >::list()
     $ret{'timestamp'} = substr($inline, 0, 8);
     my $remain = substr($inline, 10);
-    if ($remain =~ m/^([0-9a-fA-F]+) ([-<>]+)(\s+)(\w+)/) {
+    if ($remain =~ m/^([0-9a-fA-F]+) ([-<>]+)(\s+)(.+)$/) {
         $ret{'tid'} = $1;
         $ret{'direction'} = ($2 eq '-->') ? 'IN' : 'OUT';
         $ret{'level'} = length($3)/2;

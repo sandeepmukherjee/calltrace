@@ -12,6 +12,10 @@
 #include <assert.h>
 #include <unistd.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define CALLTRACE_BUFFER_SIZE (1024 * 1024) /* 1 MB default */
 struct calltrace_rec {
     uint64_t type;
@@ -113,3 +117,7 @@ void calltrace_disable()
     fptr = NULL;
     pthread_mutex_unlock(&loglock);
 }
+
+#ifdef __cplusplus
+}
+#endif

@@ -27,10 +27,15 @@ my %syms; # Maps address -> symbol name
 my %indents;
 open(SYMLOG, "$dir/gdbsyms") or die "Can't open $dir/gdbsyms";
 while (<SYMLOG>) {
-    # parse this:
+    # parse lines like these:
     #0x8046743d0 <funcname at /path/to/file.c:86>: 0xe5894855
-    if (/(0x[\dabcdef]+) <(\w+)/) {
-        $syms{$1} = $2;
+    #0x406718 <WTP::WorkerThreadPool::getTotalProcessing()>:	0xe5894855
+    #0x407806 <std::queue<WTP::WorkItem*, std::deque<WTP::WorkItem*, std::allocator<WTP::WorkItem*> > >::empty() const>:	0xe5894855
+    if (/(0x[\dabcdef]+) <(.+)>:\t/) {
+        my $sym = $2;
+        my $addr = $1;
+        $sym =~ s/ at .+$//;
+        $syms{$addr} = $sym
     }
 }
 
