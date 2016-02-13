@@ -76,6 +76,7 @@ A: Yes! But you will need to find a Linux/BSD machine with perl and a way to
    directory instead of /tmp)
 
 Q: Does it work with C++?
+
 A: Yes, but you might hit this problem:
    https://gcc.gnu.org/bugzilla/show_bug.cgi?id=49718
    To workaround, compile calltrace.c using gcc (not g++), then link
